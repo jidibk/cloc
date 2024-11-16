@@ -1,6 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import './clock.css'
+// import beep from './beep.mp3'
 
 import store from '../redux/store'
 
@@ -21,7 +22,18 @@ function Clock(props)
     // const dispatch = useDispatch()
 
     
-    
+    const audioRef = useRef(null);
+    const [sound, setSound] = useState(false);
+
+    // const beep = () => {
+    //     if (!sound) {
+    //         console.log('beep');
+            
+    //         audioRef.current.play();
+    //         // setSound(true);
+    //       }
+      
+    // };
     
     const increase_S = () => {
         if (playing === false && sessionTime < 60) {
@@ -75,6 +87,9 @@ function Clock(props)
             } else {
               clearInterval(intervalId);
               setPlaying(false)
+              // const audio = document.getElementById('beep');
+              // audio.play();
+              audioRef.current.play();
             }
           }, 1000);
       } 
@@ -108,9 +123,19 @@ function Clock(props)
       setMinutes(25);
       setSeconds(0);
       setBreak(false);
+      if (sound) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.pause();
+        setSound(false);
+      }
+      else {
+        setSound(true);
+      }
     };
 
-
+    // useEffect(() => {
+    //   if ()
+    // });
 
 
 
@@ -164,10 +189,15 @@ function Clock(props)
             <h3 id='time-left'>
               {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
             </h3>
+            {/* <audio id="beep">
+              <source src="beep.mp3" type="audio/mpeg" /> 
+            </audio>  audio for timer */}
           </div> 
           <div className='buttons'>
             <button id='reset' className='btn btn-primary float-right' onClick={reset}><i className="fa fa-repeat">reset</i></button>
-            <button id='start_stop' className='btn btn-primary float-left' onClick={togglePause}><i className="fa-play-pause">play</i></button>
+            {/* <button onClick={beep}>Play beep</button> */}
+            <audio id="beep" src="beep.mp3" ref={audioRef} />
+            <button id='start_stop' className='btn btn-primary float-left' onClick={togglePause}><i className="fa-play-pause">{playing? 'Stop': 'Start'}</i></button>
           </div>
         </div>
         <div className='footer'>by #JIDIBK</div>
